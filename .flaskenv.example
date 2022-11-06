@@ -1,0 +1,4 @@
+FLASK_APP = "main_app.py"
+DATABASE_URI = "postgresql+psycopg2://postgres:123123@localhost/flask-iot"
+JWT_SECRET = "sample_secret"
+PER_PAGE = 5

@@ -2,11 +2,13 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
+from flask_cors import CORS
 
 from config.base import BaseConfig
 
 app = Flask(__name__)
 app.config.from_object(BaseConfig)
+CORS(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 

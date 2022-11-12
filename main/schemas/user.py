@@ -1,5 +1,6 @@
 from .base import BaseSchema
 from marshmallow import fields, validate, ValidationError, validates
+# from .device import DeviceSchema
 
 
 class UserSchema(BaseSchema):
@@ -7,6 +8,7 @@ class UserSchema(BaseSchema):
     username = fields.String(required=True)
     password = fields.String(required=True, validate=validate.Length(min=6))
     is_admin = fields.Boolean()
+    devices = fields.List(fields.Nested("DeviceSchema", exclude=('users',)))
 
     @validates("password")
     def password_validator(self, value: str):

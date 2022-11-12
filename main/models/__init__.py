@@ -1,1 +1,1 @@
-__all__ = ['user']
+__all__ = ['user', 'record', 'user_device', 'user', 'device']

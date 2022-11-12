@@ -8,6 +8,7 @@ class User(ModelMixin, db.Model):
     username = db.Column(db.String(64), index=True,
                          unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    display_name = db.Column(db.String(64), nullable=True, unique=False)
     is_admin = db.Column(db.Boolean(), nullable=False, default=False)
 
     def __repr__(self) -> str:

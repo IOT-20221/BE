@@ -2,9 +2,10 @@ import functools
 import jwt
 from marshmallow import ValidationError
 from flask import request
-from .exceptions import UnauthorizedError, SchemaValidationError
+from .exceptions import UnauthorizedError, SchemaValidationError, RecordNotFoundError
 from main import app
 from main.models.user import User
+from main.models.device import Device
 
 
 # Validate request input with schema
@@ -57,5 +58,31 @@ def admin_guard(func):
         if not user.is_admin:
             raise UnauthorizedError(
                 error_message=["Admin priviledge required for this route"])
+        return func(*args, **kwargs)
+    return wrapper
+
+
+def check_user_device(func):
+    @functools.wraps(func)
+    def wrapper(*args, user_id, code, **kwargs):
+        user = User.query.get(user_id)
+        filtered = filter(lambda d: d['code'] == 'code', user.devices)
+        if filtered is not None and len(filtered) != 0:
+            raise UnauthorizedError(
+                error_message=["User does not have the authority over this device!"])
+        kwargs['user'] = user
+        return func(*args, **kwargs)
+    return wrapper
+
+
+def check_device_exist(func):
+    @functools.wraps(func)
+    def wrapper(*args, code, **kwargs):
+        device = Device.query.filter_by(code=code).one_or_none()
+        if device is None:
+            raise RecordNotFoundError(
+                error_message=["No device with such code exists!"])
+        kwargs['device'] = device
+        kwargs['code'] = code
         return func(*args, **kwargs)
     return wrapper

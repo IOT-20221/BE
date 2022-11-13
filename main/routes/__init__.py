@@ -1,1 +1,1 @@
-from . import user, device
+from . import user, device, record

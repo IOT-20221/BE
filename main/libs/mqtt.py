@@ -11,11 +11,11 @@ mqtt_client = Mqtt()
 def on_connection(client, userdata, flags, rc):
     if rc == 0:
         print("Connected sucessfully to MQTT Broker!")
-        # with app.app_context():
-        #     devices = Device.query.filter(
-        #         Device.users.query.count() != 0).all()
-        #     for d in devices:
-        #         mqtt_client.subscribe(f'{d.code}/data')
+        with app.app_context():
+            devices = Device.query.filter(Device.users.any()).all()
+            for d in devices:
+                mqtt_client.subscribe(f'{d.code}/data')
+                print(f"Subscribed to {d.code}")
     else:
         print(f"Failed to connect to MQTT broker with status {rc}")
 

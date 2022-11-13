@@ -15,7 +15,8 @@ class DeviceSchema(BaseSchema):
     place_of_manufacture = fields.String(
         required=True, validate=validate.Length(max=255))
     version = fields.String(required=True, validate=validate.Length(max=10))
-    users = fields.List(fields.Nested(UserSchema(), exclude=("devices",)))
+    users = fields.List(fields.Nested(
+        UserSchema(), exclude=("devices",)), allow_none=True)
 
     @post_load
     def strip(self, data, **kwargs):

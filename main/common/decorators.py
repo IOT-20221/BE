@@ -2,7 +2,7 @@ import functools
 import jwt
 from marshmallow import ValidationError
 from flask import request
-from .exceptions import UnauthorizedError, SchemaValidationError, RecordNotFoundError
+from .exceptions import UnauthorizedError, SchemaValidationError, RecordNotFoundError, RecordExistedError
 from main import app
 from main.models.user import User
 from main.models.device import Device
@@ -66,11 +66,27 @@ def check_user_device(func):
     @functools.wraps(func)
     def wrapper(*args, user_id, code, **kwargs):
         user = User.query.get(user_id)
-        filtered = filter(lambda d: d['code'] == 'code', user.devices)
-        if filtered is not None and len(filtered) != 0:
+        filtered = list(filter(lambda d: d.code == code, user.devices))
+        if len(filtered) == 0:
             raise UnauthorizedError(
                 error_message=["User does not have the authority over this device!"])
         kwargs['user'] = user
+        kwargs["user_id"] = user_id
+        kwargs["code"] = code
+        return func(*args, **kwargs)
+    return wrapper
+
+
+def check_user_device_already_exist(func):
+    @functools.wraps(func)
+    def wrapper(*args, user_id, code, **kwargs):
+        user = User.query.get(user_id)
+        filtered = list(filter(lambda d: d.code == code, user.devices))
+        if len(filtered) > 0:
+            raise RecordExistedError(
+                error_message=["User have already owned this device!"])
+        kwargs['user_id'] = user_id
+        kwargs['code'] = code
         return func(*args, **kwargs)
     return wrapper
 

@@ -21,8 +21,8 @@ def sign_in(username, password, **kwargs):
 
 
 @app.post("/user/sign-up")
-@validate_input(UserSchema)
-def sign_up(username, password, is_admin, **kwargs):
+@validate_input(UserSchema, partial=True)
+def sign_up(username, password, **kwargs):
     existing_user_name = User.query.filter_by(username=username).one_or_none()
     if existing_user_name is not None:
         raise RecordExistedError(
@@ -32,7 +32,7 @@ def sign_up(username, password, is_admin, **kwargs):
     new_user = User()
     new_user.username = username
     new_user.set_password(password)
-    new_user.is_admin = is_admin
+    new_user.is_admin = False
     db.session.add(new_user)
     db.session.commit()
 

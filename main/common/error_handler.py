@@ -53,6 +53,15 @@ def register_error_handler():
             405,
         )
 
+    @app.errorhandler(400)
+    def handle_bad_request(e):
+        return make_response(
+            jsonify({
+                "error_message": str(e)
+            }),
+            400
+        )
+
     @app.errorhandler(404)
     def handle_not_found(e):
         return make_response(

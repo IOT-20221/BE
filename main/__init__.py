@@ -5,13 +5,30 @@ from importlib import import_module
 from flask_cors import CORS
 from flask_mqtt import Mqtt
 from config.base import BaseConfig
+from flasgger import Swagger
 
 app = Flask(__name__)
 app.config.from_object(BaseConfig)
 CORS(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
+Swagger(app, template={
+    "swagger": "2.0",
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "securityDefinitions": {
+        "Bearer": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization"
+        }
+    },
+    "security":{
+        "Bearer": []
+    }
+})
 import main.common
 import main.routes
 import main.libs.mqtt

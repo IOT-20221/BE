@@ -99,7 +99,7 @@ def sign_up(username, password, **kwargs):
 
 @app.post("/user/me")
 @jwt_guard
-def test_user(user_id, **kwargs):
+def user_info(user_id, **kwargs):
     user = User.query.get(user_id)
     return jsonify({
         "user_id": user.id,
@@ -108,7 +108,7 @@ def test_user(user_id, **kwargs):
     })
 
 
-@app.post("/user/me-admin")
+@app.post("/user/admin/me")
 @jwt_guard
 @admin_guard
 def test_admin(user_id, **kwargs):
